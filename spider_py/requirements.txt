@@ -1,0 +1,15 @@
+# Spider Smart Crawl - Python Implementation
+# Requirements
+
+# HTTP client with async support
+aiohttp>=3.9.0
+
+# HTML parsing
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Headless browser automation
+playwright>=1.40.0
+
+# Optional: For better async support
+# asyncio is part of Python 3.7+ standard library
