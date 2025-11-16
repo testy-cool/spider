@@ -212,20 +212,150 @@ Browser initialized:    YES
 
 This shows that only 16.7% of pages required browser rendering - the rest used the fast HTTP path!
 
+## Testing & Validation
+
+The implementation includes multiple testing utilities to help you understand and validate the smart crawl behavior:
+
+### 1. Detection Demo (No Dependencies)
+
+**File**: `examples/test_detection_demo.py`
+
+Quick demonstration of JavaScript detection using example HTML snippets. Requires NO dependencies - runs with Python standard library only.
+
+```bash
+python examples/test_detection_demo.py
+```
+
+**What it shows**:
+- How different HTML patterns are detected
+- Static vs dynamic page classification
+- Framework detection (Next.js, React, etc.)
+- Performance comparison estimates
+
+**Perfect for**: Understanding how the detection logic works without installing anything.
+
+### 2. Detection on Real Pages (HTTP Only)
+
+**File**: `examples/test_detection_only.py`
+
+Test JavaScript detection on real URLs using HTTP only (no browser). Requires: `pip install aiohttp beautifulsoup4 lxml`
+
+```bash
+# Single page
+python examples/test_detection_only.py https://example.com
+
+# Interactive mode
+python examples/test_detection_only.py
+```
+
+**What it shows**:
+- Real-time fetching and analysis
+- Actual script sources found
+- DOM patterns in live pages
+- Smart crawl decision (HTTP vs Browser)
+
+**Perfect for**: Testing if specific sites need browser rendering before running a full crawl.
+
+### 3. Full Single Page Test (With Browser)
+
+**File**: `examples/test_single_page.py`
+
+Complete single-page test including browser rendering comparison. Requires full installation.
+
+```bash
+# Test with smart decision
+python examples/test_single_page.py https://example.com
+
+# Force browser rendering for comparison
+python examples/test_single_page.py https://example.com --force
+
+# Interactive mode
+python examples/test_single_page.py
+```
+
+**What it shows**:
+- HTTP vs Browser link extraction comparison
+- What new links are discovered by rendering
+- Performance impact of browser usage
+- Complete metadata extraction
+
+**Perfect for**: Validating crawl behavior on specific pages before running full crawls.
+
+### 4. Pattern Tests
+
+**File**: `examples/test_patterns.py`
+
+Basic pattern matching validation (no network required).
+
+```bash
+python examples/test_patterns.py
+```
+
+**Output**:
+```
+============================================================
+PATTERN DETECTION TESTS (No Dependencies)
+============================================================
+
+Testing DOM manipulation detection...
+  ✓ DOM pattern detection works
+Testing framework detection...
+  ✓ Framework patterns work
+
+============================================================
+ALL PATTERN TESTS PASSED ✓
+============================================================
+```
+
+### Testing Workflow
+
+**Recommended testing approach:**
+
+1. **Start with demo** (`test_detection_demo.py`) - No installation needed
+2. **Test detection on real sites** (`test_detection_only.py`) - Minimal deps
+3. **Validate with browser** (`test_single_page.py`) - Full comparison
+4. **Run full crawl** (`smart.py`) - Production usage
+
+**Example Testing Session:**
+
+```bash
+# 1. Understand the detection logic
+python examples/test_detection_demo.py
+
+# 2. Test your target site
+python examples/test_detection_only.py https://mysite.com
+
+# 3. If it detects JS, verify with browser comparison
+pip install -r requirements.txt
+playwright install chromium
+python examples/test_single_page.py https://mysite.com --force
+
+# 4. Run actual crawl
+python examples/smart.py
+```
+
 ## File Structure
 
 ```
 spider_py/
 ├── __init__.py              # Package exports
-├── smart_crawler.py         # Main SmartCrawler class
-├── page.py                  # Page handling & smart links
-├── browser.py               # Lazy browser controller
-├── patterns.py              # JS detection patterns
-├── configuration.py         # Configuration dataclass
+├── smart_crawler.py         # Main SmartCrawler class (378 lines)
+├── page.py                  # Page handling & smart links (198 lines)
+├── browser.py               # Lazy browser controller (156 lines)
+├── patterns.py              # JS detection patterns (158 lines)
+├── configuration.py         # Configuration dataclass (46 lines)
 ├── requirements.txt         # Python dependencies
+├── setup.py                 # Package installation
+├── .gitignore              # Python gitignore
 ├── README.md               # This file
+├── QUICK_START.md          # 5-minute guide
 └── examples/
-    └── smart.py            # Example usage
+    ├── smart.py                  # Full crawl example
+    ├── test_single_page.py       # Single page test (with browser)
+    ├── test_detection_only.py    # Detection test (HTTP only)
+    ├── test_detection_demo.py    # Demo (no dependencies)
+    ├── test_patterns.py          # Pattern validation
+    └── test_simple.py            # Simple integration test
 ```
 
 ## Requirements
